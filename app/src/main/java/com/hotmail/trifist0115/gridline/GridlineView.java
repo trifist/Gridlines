@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -73,7 +74,7 @@ public class GridlineView extends View {
             canvas.drawLine(0, i, getMeasuredWidth(), i, gridlinePaint);
         }
 
-        for (int i = sideLength; i < getMeasuredHeight(); i += sideLength) {
+        for (int i = sideLength; i < getMeasuredWidth(); i += sideLength) {
             canvas.drawLine(i, 0, i, getMeasuredHeight(), gridlinePaint);
         }
 
