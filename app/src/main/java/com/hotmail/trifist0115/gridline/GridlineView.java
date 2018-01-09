@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -96,12 +97,17 @@ public class GridlineView extends View {
     public void jump() {
         final String time = (distance * 1.35) + "";
         if (distance > 0) {
-            new Thread() {
-                @Override
-                public void run() {
-                    execShellCmd("input swipe 100 100 100 100 " + time);
-                }
-            }.start();
+//            new Thread() {
+//                @Override
+//                public void run() {
+//                    execShellCmd("input swipe 100 100 100 100 " + time);
+//                }
+//            }.start();
+            try {
+                new ProcessBuilder(new String[]{"input", "swipe", "100", "800", "100", "800", "1000"}).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
