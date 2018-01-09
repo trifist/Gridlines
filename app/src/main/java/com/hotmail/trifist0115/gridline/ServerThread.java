@@ -3,6 +3,8 @@ package com.hotmail.trifist0115.gridline;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -13,6 +15,7 @@ import java.net.Socket;
 public class ServerThread extends Thread {
     private static final int PORT = 2345;
     private ServerSocket serverSocket;
+    private Socket socket;
     private boolean isRunning = true;
 
     public ServerThread() throws IOException {
@@ -21,24 +24,31 @@ public class ServerThread extends Thread {
 
     @Override
     public void run() {
+        try {
+            socket = serverSocket.accept();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         while(isRunning) {
-            Socket socket = null;
             try {
-                socket = serverSocket.accept();
-                DataInputStream is = new DataInputStream(socket.getInputStream());
-                DataOutputStream os = new DataOutputStream(socket.getOutputStream());
-                String response = getResponse(is.readUTF());
-                os.writeUTF(response);
+                if(socket == null) {
+                    break;
+                }
+                InputStream is = socket.getInputStream();
+                OutputStream os = socket.getOutputStream();
+                byte [] buffer = new byte[1024];
+                int len = is.read(buffer, 0, 1024);
+                String response = getResponse(new String(buffer).substring(0, len));
+                os.write(response.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                if(socket != null) {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+            }
+        }
+        if(socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         if(serverSocket != null) {

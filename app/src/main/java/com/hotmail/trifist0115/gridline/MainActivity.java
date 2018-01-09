@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 public class MainActivity extends Activity {
 
     @Override
@@ -17,6 +19,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setButton();
+        try {
+            ServerThread serverThread = new ServerThread();
+            serverThread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
