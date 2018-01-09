@@ -6,20 +6,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.hardware.input.InputManager;
-import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.view.InputEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Created by Tristan (wpcheng@iflytek.com) on 2017/12/30.
@@ -107,22 +99,25 @@ public class GridlineView extends View {
             new Thread() {
                 @Override
                 public void run() {
-                    Process process = null;
-                    try {
-                        process = Runtime.getRuntime().exec("su");
-                        DataOutputStream os = new DataOutputStream(process.getOutputStream());
-                        String cmd = "input swipe 100 100 100 100 " + time + "\n";
-                        os.writeBytes(cmd);
-                        os.flush();
-                        os.close();
-                        process.waitFor();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    execShellCmd("input swipe 100 100 100 100 " + time);
                 }
             }.start();
+        }
+    }
+
+    private void execShellCmd(String cmd) {
+
+        try {
+            Process process = Runtime.getRuntime().exec("su");
+            OutputStream outputStream = process.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+            dataOutputStream.writeBytes(cmd);
+            dataOutputStream.flush();
+            dataOutputStream.close();
+            outputStream.close();
+            process.waitFor();
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
