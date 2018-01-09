@@ -1,7 +1,5 @@
 package com.hotmail.trifist0115.gridline;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,6 +15,8 @@ public class ServerThread extends Thread {
     private ServerSocket serverSocket;
     private Socket socket;
     private boolean isRunning = true;
+    private static int time = 0;
+    private static boolean canJump = false;
 
     public ServerThread() throws IOException {
         serverSocket = new ServerSocket(PORT);
@@ -68,9 +68,29 @@ public class ServerThread extends Thread {
         if("hello".equals(input)) {
             return "hello";
         } else if("get_time".equals(input)) {
-            return "1000";
+            if(canJump()) {
+                setCanJump(false);
+                return "" + getTime();
+            }
+            return "error: cannot jump now";
         } else {
             return "error: invalid input";
         }
+    }
+
+    public synchronized static int getTime() {
+        return time;
+    }
+
+    public synchronized static void setTime(int time) {
+        ServerThread.time = time;
+    }
+
+    public synchronized static boolean canJump() {
+        return canJump;
+    }
+
+    public synchronized static void setCanJump(boolean canJump) {
+        ServerThread.canJump = canJump;
     }
 }

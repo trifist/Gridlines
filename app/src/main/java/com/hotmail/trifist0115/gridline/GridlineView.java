@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -26,23 +25,19 @@ public class GridlineView extends View {
     private Point p1 = new Point();
     private Point p2 = new Point();
     private double distance;
-    private InputManager im;
 
     public GridlineView(Context context) {
         super(context);
-        im = (InputManager) context.getSystemService(Context.INPUT_SERVICE);
         initPaint();
     }
 
     public GridlineView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        im = (InputManager) context.getSystemService(Context.INPUT_SERVICE);
         initPaint();
     }
 
     public GridlineView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        im = (InputManager) context.getSystemService(Context.INPUT_SERVICE);
         initPaint();
     }
 
@@ -97,12 +92,8 @@ public class GridlineView extends View {
     public void jump() {
         final String time = (distance * 1.35) + "";
         if (distance > 0) {
-            new Thread() {
-                @Override
-                public void run() {
-                    execShellCmd("input swipe 100 100 100 100 " + time);
-                }
-            }.start();
+            ServerThread.setTime((int) (distance * 1.35));
+            ServerThread.setCanJump(true);
         }
     }
 
