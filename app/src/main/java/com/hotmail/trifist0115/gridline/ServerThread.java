@@ -24,25 +24,35 @@ public class ServerThread extends Thread {
 
     @Override
     public void run() {
+        try {
+            socket = serverSocket.accept();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         while(isRunning) {
             try {
-                socket = serverSocket.accept();
+                if(socket == null) {
+                    break;
+                }
                 InputStream is = socket.getInputStream();
                 OutputStream os = socket.getOutputStream();
                 byte [] buffer = new byte[1024];
                 int len = is.read(buffer, 0, 1024);
-                String response = getResponse(new String(buffer).substring(0, len));
-                os.write(response.getBytes());
+                if(len > 0) {
+                    String response = getResponse(new String(buffer).substring(0, len));
+                    os.write(response.getBytes());
+                } else {
+                    break;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                if(socket != null) {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+            }
+        }
+        if(socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         if(serverSocket != null) {
