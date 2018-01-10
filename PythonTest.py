@@ -41,11 +41,18 @@ def removeDup():
     return 0
 
 def adb():
-    pdb.set_trace()
+   #pdb.set_trace()
+    os.system("adb forward tcp:5432 tcp:2345")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(("127.0.0.1", 5432))
-    s.sendall("get_time")
-    print(s.recv(1024))
+    while(True):
+        time.sleep(0.5)
+        s.send("get_time".encode(encoding = "utf-8"))
+        reply = str(s.recv(1024), encoding = "utf-8")
+        print(reply)
+        if(reply.isnumeric()):
+            os.system("adb shell input swipe 100 100 100 100 " + reply)
+
 
 def main():
     adb()

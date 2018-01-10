@@ -15,6 +15,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import java.io.IOException;
+
 /**
  * Created by Tristan (wpcheng@iflytek.com) on 2017/12/30.
  */
@@ -50,6 +52,12 @@ public class FloatService extends Service {
             public void onClick(View view) {
                 smallLayout.setVisibility(View.GONE);
                 gradlineLayout.setVisibility(View.VISIBLE);
+                try {
+                    ServerThread serverThread = new ServerThread();
+                    serverThread.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         windowManager.addView(smallLayout, wmParams);
